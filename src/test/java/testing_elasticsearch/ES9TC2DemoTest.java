@@ -14,19 +14,19 @@ class ES9TC2DemoTest {
 
     @Test
     void newClientTest() throws IOException {
-        try (var container =
-                 new ElasticsearchContainer("docker.elastic.co/elasticsearch/elasticsearch:9.3.1")) {
+        try (var elasticsearchContainer =
+                 new ElasticsearchContainer("docker.elastic.co/elasticsearch/elasticsearch:9.4.1")) {
 
-            container.start();
+            elasticsearchContainer.start();
 
             try (
                 var client = ElasticsearchClient.of(c ->
-                    c.host("https://" + container.getHttpHostAddress())
+                    c.host("https://" + elasticsearchContainer.getHttpHostAddress())
                         // username and password are fine in tests
                         // in production, please use API keys whenever possible
                         .usernameAndPassword("elastic", ElasticsearchContainer.ELASTICSEARCH_DEFAULT_PASSWORD)
                         // there is no need to turn off security
-                        .sslContext(container.createSslContextFromCa()))) {
+                        .sslContext(elasticsearchContainer.createSslContextFromCa()))) {
 
                 HealthResponse health = client.cluster().health();
                 Assertions.assertEquals("docker-cluster", health.clusterName());
